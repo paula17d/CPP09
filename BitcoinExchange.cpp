@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauladrettas <pauladrettas@student.42.f    +#+  +:+       +#+        */
+/*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/30 11:14:34 by pauladretta       #+#    #+#             */
-/*   Updated: 2026/04/30 16:21:08 by pauladretta      ###   ########.fr       */
+/*   Updated: 2026/05/03 00:52:16 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,126 @@ str.erase(pos, len)
 str.compare(other)
 */
 
-/*
-A year is a leap year if it is divisible by 4, 
-except for century years (ending in 00) which must be divisible by 400. 
-Formula: (Year % 4 == 0 AND Year % 100 != 0) OR (Year % 400 == 0). 
-For instance, 2024 is a leap year (divisible by 4), 1900 was not (divisible by 100 but not 400), 
-and 2000 was.
-*/
-bool isLeapYear(int year)
+BitcoinExchange::BitcoinExchange(const std::string &file)
 {
-    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+    // TODO: ft loadData (data.csv) -> store everything in a std::map container (to compute later w value rows from input.csv)
+    processInputFile(file);
+}
+
+void BitcoinExchange::processInputFile(const std::string &file)
+{
+    Result res;
+    
+    // -- FILE --
+    std::ifstream fileStream(file);
+    if (!fileStream)
+        std::cerr << "Error: could not open file." << std::endl;
+    
+    // -- HEADER --
+    std::string row;
+    parseColumnHeader(fileStream, row);
+
+    // -- ROWS --
+    while (getline(fileStream, row)) // TODO: change condition of when to stop
+    {
+        parseRow(row, res); // if correct, then compute. if not return string error to print in output ft
+        // TODO: printError (if there is and break. if not, then continue to next two)
+        if (!(printError(res)))
+        {
+            // TODO: ft add compute value ft (problem: need to print in order (keeping errors))
+            // TODO: ft print output (the row and its result)
+            // printResultLine();
+        }
+    }
+}
+
+void BitcoinExchange::parseRow(std::string &row, Result &res)
+{
+    std::istringstream iss(row);
+    
+    // parse date
+    std::string date;
+    iss >> date;
+    if (!(isValidDate(date)))
+    {
+        res.errorMsg = std::string("Error: bad input => '")
+                + date;
+        res.errorFound = true;
+        return ;
+    }
+
+    // parse "|"
+    std::string bar;
+    iss >> bar;
+    if (bar != "|")
+    {
+        res.errorMsg = std::string("Error: bad input => '")
+                + bar
+                + "'. Should only be '|'.";
+        res.errorFound = true;
+        return ;
+    }
+
+    // parse value
+    float value;
+    iss >> value;
+    if (value < 0)
+    {
+        res.errorMsg = std::string("Error: not a positive number.");
+        res.errorFound = true;
+        return ;
+    }
+
+    if (value > 1000)
+    {
+        res.errorMsg = std::string("Error: too large a number.");
+        res.errorFound = true;
+        return ;
+    }
+
+    // parse input that's left after supposed end
+    std::string leftover;
+    iss >> leftover;
+    if (!leftover.empty())
+    {
+        res.errorMsg = std::string("Error: bad input => '")
+                + leftover;
+        res.errorFound = true;
+        return ;
+    }
+    
+    // save in std::map (this is supposed to be for data.csv)
+    // _data.insert(std::make_pair(date, value)); // TODO: is _data supposed to be used here tho?? only for data.csv
+    // // check for duplicate dates 
+    // if (_data.find(date) != _data.end())
+    // {
+    //     res.errorMsg = std::string("Error: date already exists, cannot appear more than once. ")
+    //             + date;
+    //     res.errorFound = true;
+    //     return ;
+    // }
+    
+    // print finalized version of row 
+    std::cout << date << " => " << value << std::endl; // TODO: do this in print output ft !!!!
+    res.errorFound = false;
+    res.date = date;
+    res.value = value;
+}
+
+void BitcoinExchange::parseColumnHeader(std::ifstream &fileStream, std::string &line)
+{
+    getline(fileStream, line);
+    std::string header = "date | value";
+    if (line != header)
+    {
+        std::cerr << "Error: bad input => '" << line << "'. Should be 'date | value'." << std::endl;
+        return ;
+    }
+    std::cout << line << std::endl;
 }
 
 // TODO: include error messages (check subject example)
-bool isValidDate(const std::string &date)
+bool BitcoinExchange::isValidDate(const std::string &date)
 {
     // check format of date
     if (date.size() != 10 || date[4] != '-' || date[7] != '-')
@@ -96,77 +202,34 @@ bool isValidDate(const std::string &date)
     return true;
 }
 
-BitcoinExchange::BitcoinExchange(const std::string &file)
+/*
+A year is a leap year if it is divisible by 4, 
+except for century years (ending in 00) which must be divisible by 400. 
+Formula: (Year % 4 == 0 AND Year % 100 != 0) OR (Year % 400 == 0). 
+For instance, 2024 is a leap year (divisible by 4), 1900 was not (divisible by 100 but not 400), 
+and 2000 was.
+*/
+bool BitcoinExchange::isLeapYear(int year)
 {
-    parseFile(file);
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
 
-// TODO: parse first line in file (date | value), still left to do 
-// TODO: parse (if empty line in file)
-void BitcoinExchange::parseFile(const std::string &file)
+/*
+Your program should display on the standard output the result of the value multiplied
+by the exchange rate according to the date indicated in your database.
+*/
+void BitcoinExchange::computeValueWithExchangeRate() // TODO: change naming of function
 {
-    // std::string error;
-    std::ifstream fileStream(file);
-    if (!fileStream)
-        std::cerr << "Error: could not open file." << std::endl;
-        
-    std::string line;
+    
+}
 
-    while (getline(fileStream, line))
+bool BitcoinExchange::printError(Result &res)
+{
+    if (res.errorFound)
     {
-        std::istringstream iss(line);
-        
-        // parse date
-        std::string date;
-        iss >> date;
-        if (!(isValidDate(date)))
-        {
-            std::cerr << "Error: bad input =>" << date << std::endl;
-            continue;   
-        }
-
-        // parse "|"
-        std::string bar;
-        iss >> bar;
-        if (bar != "|")
-        {
-            std::cerr << "Error: bad input => '" << bar << "'. Should only be '|'." << std::endl;
-            // std::cerr << "Error: no bar found '|'." << std::endl;
-            continue;   
-        }
-
-        // parse exchange rate
-        float value;
-        iss >> value;
-        if (value < 0)
-        {
-            std::cerr << "Error: not a positive number." << std::endl;
-            continue;   
-        }
-
-        if (value > 1000)
-        {
-            std::cerr << "Error: too large a number." << std::endl;
-            continue;   
-        }
-
-        // parse input left after supposed end
-        std::string leftover;
-        iss >> leftover;
-        if (!leftover.empty())
-        {
-            std::cerr << "Error: bad input => " << leftover << std::endl;
-            continue;
-        }
-        
-        // save in std::map
-        if (data.find(date) != data.end())
-        {
-            std::cerr << "Error: date already exists, cannot appear more than once. " << date << std::endl;
-            continue;
-        }
-        data.insert(std::make_pair(date, value));
-        
-        std::cout << line << std::endl;
+        std::cerr << res.errorMsg << std::endl;
+        return true;
     }
+
+    return false; // no error printed
 }

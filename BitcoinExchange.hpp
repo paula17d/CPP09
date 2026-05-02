@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauladrettas <pauladrettas@student.42.f    +#+  +:+       +#+        */
+/*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/30 11:10:02 by pauladretta       #+#    #+#             */
-/*   Updated: 2026/04/30 15:51:41 by pauladretta      ###   ########.fr       */
+/*   Updated: 2026/05/03 00:49:19 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,29 @@
 #include <fstream>
 #include <sstream>
 #include <map>
+#include <ctime>
+
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define ORANGE "\033[38;5;208m"
+#define BLUE "\033[34m"
+#define LIGHT_GREEN "\033[38;5;120m"
+#define RESET "\033[0m"
 
 // TODO: define and add all errors here (from parsing)
 
 class BitcoinExchange
 {
     private:
-        std::map<std::string, float> data;
+        std::map<std::string, float> _data;
+
+        struct Result // TODO: initialize??
+        {
+            std::string date;
+            float value;
+            bool errorFound;
+            std::string errorMsg;
+        };
 
     public:
         // Default constructor
@@ -35,10 +51,17 @@ class BitcoinExchange
         // Copy assignment operator
         BitcoinExchange& operator=(const BitcoinExchange& other);
         // Destructor
-        // ~BitcoinExchange();
+        // ~BitcoinExchange(); // TODO: ?
 
         // member functions
-        void parseFile(const std::string &file);
+        void processInputFile(const std::string &file);
+        void parseColumnHeader(std::ifstream &fileStream, std::string &row);
+        void parseRow(std::string &row, Result &res);
+        bool isValidDate(const std::string &date);
+        bool isLeapYear(int year);
+        bool printError(Result &res);
+        void computeValueWithExchangeRate();
+        void printResultLine();
 };
 
 #endif
