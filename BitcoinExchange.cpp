@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/30 11:14:34 by pauladretta       #+#    #+#             */
-/*   Updated: 2026/05/03 00:52:16 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/04 01:12:00 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,31 @@ str.compare(other)
 
 BitcoinExchange::BitcoinExchange(const std::string &file)
 {
-    // TODO: ft loadData (data.csv) -> store everything in a std::map container (to compute later w value rows from input.csv)
+    //Parse data.csv
+    loadDatabase();
+    
     processInputFile(file);
+}
+
+void BitcoinExchange::loadDatabase()
+{
+    // open file
+    std::ifstream fileStream("data.csv");
+    if (!fileStream)
+        std::cerr << "Error: could not open database file (data.csv)." << std::endl;
+    
+    // get line / skip column header
+    std::string row;
+    getline(fileStream, row);
+
+    // get date & exchange rate from rows and assign to map
+    while (getline(fileStream, row))
+    {
+        std::string date = row.substr(0, 10);
+        float exchangeRate = std::atof(row.substr(11).c_str()); //
+        _data.insert(std::make_pair(date, exchangeRate));
+        // std::cout << date << "," << std::fixed << std::setprecision(2) << exchangeRate << std::endl;
+    } 
 }
 
 void BitcoinExchange::processInputFile(const std::string &file)
@@ -37,7 +60,7 @@ void BitcoinExchange::processInputFile(const std::string &file)
     // -- FILE --
     std::ifstream fileStream(file);
     if (!fileStream)
-        std::cerr << "Error: could not open file." << std::endl;
+        std::cerr << "Error: could not open file." << std::endl; // TODO: print error
     
     // -- HEADER --
     std::string row;
@@ -51,6 +74,7 @@ void BitcoinExchange::processInputFile(const std::string &file)
         if (!(printError(res)))
         {
             // TODO: ft add compute value ft (problem: need to print in order (keeping errors))
+            computeValueWithExchangeRate(res);
             // TODO: ft print output (the row and its result)
             // printResultLine();
         }
@@ -66,7 +90,8 @@ void BitcoinExchange::parseRow(std::string &row, Result &res)
     iss >> date;
     if (!(isValidDate(date)))
     {
-        res.errorMsg = std::string("Error: bad input => '")
+        // TODO: put this into a call printError function (string, bool) as input instead of like this
+        res.errorMsg = std::string("Error: bad input => '") 
                 + date;
         res.errorFound = true;
         return ;
@@ -124,7 +149,7 @@ void BitcoinExchange::parseRow(std::string &row, Result &res)
     // }
     
     // print finalized version of row 
-    std::cout << date << " => " << value << std::endl; // TODO: do this in print output ft !!!!
+    // std::cout << date << " => " << value << std::endl; // TODO: do this in print output ft !!!!
     res.errorFound = false;
     res.date = date;
     res.value = value;
@@ -214,15 +239,6 @@ bool BitcoinExchange::isLeapYear(int year)
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
 
-/*
-Your program should display on the standard output the result of the value multiplied
-by the exchange rate according to the date indicated in your database.
-*/
-void BitcoinExchange::computeValueWithExchangeRate() // TODO: change naming of function
-{
-    
-}
-
 bool BitcoinExchange::printError(Result &res)
 {
     if (res.errorFound)
@@ -232,4 +248,32 @@ bool BitcoinExchange::printError(Result &res)
     }
 
     return false; // no error printed
+}
+
+/*
+Your program should display on the standard output the result of the value multiplied
+by the exchange rate according to the date indicated in your database.
+*/
+void BitcoinExchange::computeValueWithExchangeRate(Result &res)
+{
+    // TODO: change _data to _database
+    
+    std::map<std::string, float>::iterator it = _data.find(res.date);
+    if (it == _data.end()) // if date not found
+    {
+        it = _data.lower_bound(res.date);
+        
+        // edgecase (if input.csv date is too early for data.csv)
+        if (it == _data.begin())
+        {
+            std::cerr << "Error: no Bitcoin exchange rate available yet for this date." << std::endl;
+            return ;
+        }
+        it--;
+    }
+    
+    float matchingExchangeRate = it->second; // second is the value, first is the key
+    float convertedValue = res.value * matchingExchangeRate; 
+
+    std::cout << res.date << " => " << res.value << " = " << convertedValue << std::endl;
 }

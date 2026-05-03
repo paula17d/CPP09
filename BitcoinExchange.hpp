@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/30 11:10:02 by pauladretta       #+#    #+#             */
-/*   Updated: 2026/05/03 00:49:19 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/03 23:58:12 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <sstream>
 #include <map>
 #include <ctime>
+#include <iomanip>
 
 #define RED "\033[31m"
 #define GREEN "\033[32m"
@@ -40,10 +41,10 @@ class BitcoinExchange
             bool errorFound;
             std::string errorMsg;
         };
+        // Default constructor
+        BitcoinExchange(); // to not instantiate 
 
     public:
-        // Default constructor
-        BitcoinExchange();
         // Personalized constructor
         BitcoinExchange(const std::string &file);
         // Copy constructor
@@ -54,13 +55,14 @@ class BitcoinExchange
         // ~BitcoinExchange(); // TODO: ?
 
         // member functions
+        void loadDatabase();
         void processInputFile(const std::string &file);
         void parseColumnHeader(std::ifstream &fileStream, std::string &row);
         void parseRow(std::string &row, Result &res);
         bool isValidDate(const std::string &date);
         bool isLeapYear(int year);
         bool printError(Result &res);
-        void computeValueWithExchangeRate();
+        void computeValueWithExchangeRate(Result &res);
         void printResultLine();
 };
 
