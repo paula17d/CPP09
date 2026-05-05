@@ -13,22 +13,13 @@
 #include "BitcoinExchange.hpp"
 
 /*
-str.length()
-str.size()
-str.empty()
-str.substr(pos, len)
-str.find("text")
-str.append("text")
-str.insert(pos, "text")
-str.erase(pos, len)
-str.compare(other)
+personalized constructor
+- parse database file data.csv
+- parse file taken as argument
 */
-
 BitcoinExchange::BitcoinExchange(const std::string &file)
 {
-    //Parse data.csv
     loadDatabase();
-    
     processInputFile(file);
 }
 
@@ -37,7 +28,7 @@ void BitcoinExchange::loadDatabase()
     // open file
     std::ifstream fileStream("data.csv");
     if (!fileStream)
-        std::cerr << "Error: could not open database file (data.csv)." << std::endl;
+        std::cerr << RED << "Error: could not open database file (data.csv)." << RESET << std::endl;
     
     // get line / skip column header
     std::string row;
@@ -48,8 +39,7 @@ void BitcoinExchange::loadDatabase()
     {
         std::string date = row.substr(0, 10);
         float exchangeRate = std::atof(row.substr(11).c_str()); //
-        _data.insert(std::make_pair(date, exchangeRate));
-        // std::cout << date << "," << std::fixed << std::setprecision(2) << exchangeRate << std::endl;
+        _database.insert(std::make_pair(date, exchangeRate));
     } 
 }
 
@@ -60,24 +50,18 @@ void BitcoinExchange::processInputFile(const std::string &file)
     // -- FILE --
     std::ifstream fileStream(file);
     if (!fileStream)
-        std::cerr << "Error: could not open file." << std::endl; // TODO: print error
+        std::cerr << RED << "Error: could not open file." << RESET << std::endl;
     
     // -- HEADER --
     std::string row;
     parseColumnHeader(fileStream, row);
 
     // -- ROWS --
-    while (getline(fileStream, row)) // TODO: change condition of when to stop
+    while (getline(fileStream, row))
     {
-        parseRow(row, res); // if correct, then compute. if not return string error to print in output ft
-        // TODO: printError (if there is and break. if not, then continue to next two)
+        parseRow(row, res);
         if (!(printError(res)))
-        {
-            // TODO: ft add compute value ft (problem: need to print in order (keeping errors))
-            computeValueWithExchangeRate(res);
-            // TODO: ft print output (the row and its result)
-            // printResultLine();
-        }
+            computeRowValueWithExchangeRate(res);
     }
 }
 
@@ -90,7 +74,6 @@ void BitcoinExchange::parseRow(std::string &row, Result &res)
     iss >> date;
     if (!(isValidDate(date)))
     {
-        // TODO: put this into a call printError function (string, bool) as input instead of like this
         res.errorMsg = std::string("Error: bad input => '") 
                 + date;
         res.errorFound = true;
@@ -137,19 +120,6 @@ void BitcoinExchange::parseRow(std::string &row, Result &res)
         return ;
     }
     
-    // save in std::map (this is supposed to be for data.csv)
-    // _data.insert(std::make_pair(date, value)); // TODO: is _data supposed to be used here tho?? only for data.csv
-    // // check for duplicate dates 
-    // if (_data.find(date) != _data.end())
-    // {
-    //     res.errorMsg = std::string("Error: date already exists, cannot appear more than once. ")
-    //             + date;
-    //     res.errorFound = true;
-    //     return ;
-    // }
-    
-    // print finalized version of row 
-    // std::cout << date << " => " << value << std::endl; // TODO: do this in print output ft !!!!
     res.errorFound = false;
     res.date = date;
     res.value = value;
@@ -161,13 +131,12 @@ void BitcoinExchange::parseColumnHeader(std::ifstream &fileStream, std::string &
     std::string header = "date | value";
     if (line != header)
     {
-        std::cerr << "Error: bad input => '" << line << "'. Should be 'date | value'." << std::endl;
+        std::cerr << RED << "Error: bad input => '" << line << "'. Should be 'date | value'." << RESET << std::endl;
         return ;
     }
     std::cout << line << std::endl;
 }
 
-// TODO: include error messages (check subject example)
 bool BitcoinExchange::isValidDate(const std::string &date)
 {
     // check format of date
@@ -243,7 +212,7 @@ bool BitcoinExchange::printError(Result &res)
 {
     if (res.errorFound)
     {
-        std::cerr << res.errorMsg << std::endl;
+        std::cerr << RED << res.errorMsg << RESET << std::endl;
         return true;
     }
 
@@ -254,19 +223,17 @@ bool BitcoinExchange::printError(Result &res)
 Your program should display on the standard output the result of the value multiplied
 by the exchange rate according to the date indicated in your database.
 */
-void BitcoinExchange::computeValueWithExchangeRate(Result &res)
+void BitcoinExchange::computeRowValueWithExchangeRate(Result &res)
 {
-    // TODO: change _data to _database
-    
-    std::map<std::string, float>::iterator it = _data.find(res.date);
-    if (it == _data.end()) // if date not found
+    std::map<std::string, float>::iterator it = _database.find(res.date);
+    if (it == _database.end()) // if date not found
     {
-        it = _data.lower_bound(res.date);
+        it = _database.lower_bound(res.date);
         
         // edgecase (if input.csv date is too early for data.csv)
-        if (it == _data.begin())
+        if (it == _database.begin())
         {
-            std::cerr << "Error: no Bitcoin exchange rate available yet for this date." << std::endl;
+            std::cerr << RED << "Error: no Bitcoin exchange rate available yet for this date." << RESET << std::endl;
             return ;
         }
         it--;
@@ -275,5 +242,21 @@ void BitcoinExchange::computeValueWithExchangeRate(Result &res)
     float matchingExchangeRate = it->second; // second is the value, first is the key
     float convertedValue = res.value * matchingExchangeRate; 
 
-    std::cout << res.date << " => " << res.value << " = " << convertedValue << std::endl;
+    std::cout << res.date << " => " << res.value << GREEN << " = " << convertedValue << RESET << std::endl;
 }
+
+BitcoinExchange::BitcoinExchange() 
+{}
+
+BitcoinExchange::BitcoinExchange(const BitcoinExchange& other) : _database(other._database)
+{}
+
+BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other)
+{
+    if (this != &other)
+        _database = other._database;
+    return *this;
+}
+
+BitcoinExchange::~BitcoinExchange() 
+{}

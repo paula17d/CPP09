@@ -27,12 +27,12 @@
 #define LIGHT_GREEN "\033[38;5;120m"
 #define RESET "\033[0m"
 
-// TODO: define and add all errors here (from parsing)
+// TODO: check for leaks
 
 class BitcoinExchange
 {
     private:
-        std::map<std::string, float> _data;
+        std::map<std::string, float> _database;
 
         struct Result // TODO: initialize??
         {
@@ -52,7 +52,7 @@ class BitcoinExchange
         // Copy assignment operator
         BitcoinExchange& operator=(const BitcoinExchange& other);
         // Destructor
-        // ~BitcoinExchange(); // TODO: ?
+        ~BitcoinExchange();
 
         // member functions
         void loadDatabase();
@@ -62,8 +62,7 @@ class BitcoinExchange
         bool isValidDate(const std::string &date);
         bool isLeapYear(int year);
         bool printError(Result &res);
-        void computeValueWithExchangeRate(Result &res);
-        void printResultLine();
+        void computeRowValueWithExchangeRate(Result &res);
 };
 
 #endif

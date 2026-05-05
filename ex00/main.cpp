@@ -26,6 +26,6 @@ int main (int argc, char **argv)
     }
 
     BitcoinExchange bc(argv[1]); // parses input.csv
-    
+
     return 0;
 }
