@@ -48,7 +48,10 @@ class PmergeMe
         ~PmergeMe();
         
         // member functions
-        void fillContainers(char **numSequence);
+        void fillContainers(char **numSequence); // TODO: or parseInput
 };
+
+std::ostream &operator<<(std::ostream &out, const std::vector<int> &vec);
+std::ostream &operator<<(std::ostream &out, const std::deque<int> &deque);
 
 #endif
