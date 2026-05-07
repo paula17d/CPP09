@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:56:50 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/06 18:25:48 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/07 15:07:27 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ to validate this exercise.
 class PmergeMe
 {
     private:
-        std::vector<int> sequenceInVec; // TODO: change naming later
-        std::deque<int> sequenceInDeque;
+        std::vector<int> vec; // TODO: change naming later
+        std::deque<int> deque;
         // constructor
         PmergeMe(); // bc should only be instantiated w integers
     
@@ -46,6 +46,9 @@ class PmergeMe
         PmergeMe& operator=(const PmergeMe& other);
         // destructor
         ~PmergeMe();
+        
+        // member functions
+        void fillContainers(char **numSequence);
 };
 
 #endif
