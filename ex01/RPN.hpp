@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 21:47:42 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/06 01:52:37 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/08 22:01:30 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 class RPN
 {
     private:
-        std::stack<int> _storage;
+        std::stack<int> _storage; // TODO: change this to std::list (bc std::stack is "part of" sd::deque which is used in ex02)
         // constructor
         RPN(); // bc should only be instantiated w equation
     
