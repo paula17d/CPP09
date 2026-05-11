@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:56:50 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/09 00:21:03 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/11 16:41:09 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,9 @@ class PmergeMe
         
         // member functions
         void fillContainers(char **numSequence); // TODO: or parseInput
-        void mergeInsertion(std::vector<int>& sequence);
+        std::vector<int> fordJohnsonAlgorithm(std::vector<int>& sequence);
+        std::vector<int> mergeInsertion(std::vector<int>& sequence);
+        std::vector<int> binaryInsertion(std::vector<int>& sequence);
 };
 
 std::ostream &operator<<(std::ostream &out, const std::vector<int> &vec);

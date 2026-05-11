@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:57:56 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/09 00:27:00 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/11 19:33:46 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,10 @@ PmergeMe::PmergeMe(char **elementSequence)
 {
     // PARSE AND FILL BOTH CONTAINERS
     fillContainers(elementSequence);
-    // --SORT THE MAIN CHAIN (LARGERELEMENTSEQUENCE)--
-    // CREATE PAIRS - SORT EACH PAIR INTERNALLY - ADD SMALLER/LARGER ELEMENT OF EACH PAIR TO SMALLERELEMENTSEQUENCE/LARGERELEMENTSEQUENCE
-    // CREATE PAIRS AGAIN (FROM LARGERELEMENTSEQUENCE ONLY) AND SO ON
-    mergeInsertion(this->vec);
 
+    
+    std::vector<int> mainChain = fordJohnsonAlgorithm(this->vec);
+    std::cout << "After [vec]: " << mainChain << std::endl;
     
     // -- --
     // 3.4: insert the smaller elements from smaller sequence (jacobsthal numbes -> to determine in which order to insert) (use lower_bound)
@@ -35,30 +34,50 @@ PmergeMe::PmergeMe(char **elementSequence)
     
 }
 
+/*
+The process of the below method is called Merge Insertion (The Art of Computer Programming).
+This is due to some aspects of merging and some aspects of insertion.
 
+This function starts with the entire original input number sequence
+but returns only the resulting main chain (which is 50% the size of the original number sequence and filled with the largest elements)
+*/
 
-void PmergeMe::mergeInsertion(std::vector<int>& sequence)
+// --SORT THE MAIN CHAIN (LARGERELEMENTSEQUENCE)--
+// CREATE PAIRS - SORT EACH PAIR INTERNALLY - ADD SMALLER/LARGER ELEMENT OF EACH PAIR TO SMALLERELEMENTSEQUENCE/LARGERELEMENTSEQUENCE
+// CREATE PAIRS AGAIN (FROM LARGERELEMENTSEQUENCE ONLY) AND SO ON
+// TODO: create helper functions for better readability
+// largerElementSequence just refers to the larger elements of each pair (not the largest elements in total)
+std::vector<int> PmergeMe::fordJohnsonAlgorithm(std::vector<int>& inputSequence)
 {
-    // step 3: MERGE INSERTION. start the algo (group in pairs, etc.) (do seperate functions for each container) (all steps for one container)
+    // *********************************step 3: MERGE INSERTION.************************  start the algo (group in pairs, etc.) (do seperate functions for each container) (all steps for one container)
     std::vector<int>::const_iterator it;
-    unsigned int leftoverElement;
     std::vector<std::pair<int, int>> pairs;
     std::vector<int> smallerElementSequence;
     std::vector<int> largerElementSequence;
-    // save leftover element (if the size of the vector is uneven)
-    if (sequence.size() % 2 != 0)
+    
+    // each level w recursion, the inputSequence becomes updated (after first recursive call the inputSequence is the largerElementSequnce as input of function)
+    if (inputSequence.size() <= 1) // so the recursion doesnt call itself forever (starts unwinding phase)
     {
-        leftoverElement = sequence.back(); 
-        // std::cout << "leftoverNum = " << leftoverNum << std::endl;  
-        sequence.pop_back();
+        std::cout << GREEN << "returned here - top" << RESET << std::endl;
+        return inputSequence;
     }
     
-    for (it = sequence.begin(); it != sequence.end(); it += 2)
+    unsigned int leftoverElement;
+    bool leftoverFound = false;
+    if (inputSequence.size() % 2 != 0)
     {
-        // --- THIS IS BASICALLY WHERE THE FORD-JOHNSON ALGORITHM STARTS (make pairs from the current sequence, sort the pairs within for left is smaller, right is bigger. now we put them into a new small sequence, and new big sequence again. within the bigger one, create pairs again and so on....)
+        leftoverFound = true;
+        leftoverElement = inputSequence.back(); 
+        // std::cout << "leftoverElement = " << leftoverElement << std::endl;  
+        inputSequence.pop_back();
+    }
+    
+    // -- sort input numbers into larger Elements and smaller Elements
+    for (it = inputSequence.begin(); it != inputSequence.end(); it += 2)
+    {
+        std::cout << BLUE << "************** LOOP ITERATION [Pair Creation]  **************" << RESET << std::endl;
+        // (make pairs from the current sequence, sort the pairs within for left is smaller, right is bigger. now we put them into a new small sequence, and new big sequence again. within the bigger one, create pairs again and so on....)
         // recursion happens to sort the main chain 
-        
-        
         
         // **** 3.1: group into pairs
         // get two numbers and create/add them as a pair to the pair vector
@@ -80,15 +99,37 @@ void PmergeMe::mergeInsertion(std::vector<int>& sequence)
         std::cout << "smallerElementSequence = " << smallerElementSequence << std::endl;
         largerElementSequence.push_back(pairs.back().second);
         std::cout << "largerElementSequence = " << largerElementSequence << std::endl;
-    
     }
-    // 3.3: sort larger elements sequence (recursion w same algorithm) (call the mergeInsertion ft again)
-    if (!(largerElementSequence.size() <= 1))
-        mergeInsertion(largerElementSequence);
     
+    // enters reaching breaking point (<) at peak when only biggest num left 
+    // AND then after if there is only one element (happens every time later when unwinding recursion since numbers get taken and previous level only has the biggest one left each time)
+    std::cout << RED << "+++++ RECURSIVE CALL ++++++" << RESET << std::endl;
+    largerElementSequence = fordJohnsonAlgorithm(largerElementSequence);
+
+    // insert stuff here from the smallerElementSequence to the largerElementSequence when UNWINDING
+    for (size_t i = 0; i < smallerElementSequence.size(); i++) // r ? // here should the jacobsthal stuff be entered to optimize insertion order of the small elements
+    {
+        std::vector<int>::iterator pos = std::lower_bound(largerElementSequence.begin(), largerElementSequence.end(), smallerElementSequence[i]);
+        largerElementSequence.insert(pos, smallerElementSequence[i]); // inserted at the position that lower_bound found closest
+        std::cout << "TEST - smallerElementSequence was added " << smallerElementSequence[i] << ", in loop iteration " << i << std::endl;
+    }
+
+    // add leftover element
+    if (leftoverFound)
+    {
+        std::vector<int>::iterator pos = std::lower_bound(largerElementSequence.begin(), largerElementSequence.end(), leftoverElement);
+        largerElementSequence.insert(pos, leftoverElement); // inserted at the position that lower_bound found closest        
+    }
+
+    // ********************BINARY INSERTION**************************
+    // ** JACOBSTHAL INSERT SMALLER ELEMENTS INTO MAIN CHAIN WITH JACOBSTHAL (this needs to be in the loop thats up there when inserting smaller elements sequence stuff)
+    // when this step happens, at that point the smallerElementSequence is filled w half the numbers from the original sequence
     
-    
+    std::cout << GREEN << "returned here - bottom" << RESET << std::endl;
+    return largerElementSequence; // TODO: rename to main chain
 }
+
+
 
 void PmergeMe::fillContainers(char **numSequence)
 {
