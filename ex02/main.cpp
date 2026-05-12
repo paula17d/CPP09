@@ -17,7 +17,7 @@ int main (int argc, char **argv)
     if (argc < 2)
     {
         std::cerr << "Error: missing arguments.\n"
-              << "Numbers may only be positive.\n"
+              << "Enter a sequence of only positive numbers.\n"
               << "Usage Example: " << argv[0] << " '4 2 8 5 9 7'" << std::endl;
         return 1;
     }

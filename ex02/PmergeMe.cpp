@@ -47,7 +47,7 @@ but returns only the resulting main chain (which is 50% the size of the original
 // CREATE PAIRS AGAIN (FROM LARGERELEMENTSEQUENCE ONLY) AND SO ON
 // TODO: create helper functions for better readability
 // largerElementSequence just refers to the larger elements of each pair (not the largest elements in total)
-std::vector<int> PmergeMe::fordJohnsonAlgorithm(std::vector<int>& inputSequence)
+std::vector<int> PmergeMe::fordJohnsonAlgorithm(std::vector<int>& inputSequence) // TODO: potentially pass without reference 
 {
     // *********************************step 3: MERGE INSERTION.************************  start the algo (group in pairs, etc.) (do seperate functions for each container) (all steps for one container)
     std::vector<int>::const_iterator it;
@@ -64,7 +64,7 @@ std::vector<int> PmergeMe::fordJohnsonAlgorithm(std::vector<int>& inputSequence)
     
     unsigned int leftoverElement;
     bool leftoverFound = false;
-    if (inputSequence.size() % 2 != 0)
+    if (inputSequence.size() % 2 != 0) // TODO: potentially put this in a different place (check sorted main chain before insertion)
     {
         leftoverFound = true;
         leftoverElement = inputSequence.back(); 
@@ -92,6 +92,7 @@ std::vector<int> PmergeMe::fordJohnsonAlgorithm(std::vector<int>& inputSequence)
         if (!(pairs.back().first < pairs.back().second))
             std::swap(pairs.back().first, pairs.back().second);
         std::cout << "sorted pair = {" << pairs.back().first << ", " << pairs.back().second << "}" << std::endl;
+        std::cout << ORANGE << "$comparison$" << RESET << std::endl;
         
         // **** 3.2: "split up" each pair internally (create two sequences: larger elements sequence, smaller elements sequence)
         // put left num in A sequence, and right num in B sequence
@@ -106,25 +107,67 @@ std::vector<int> PmergeMe::fordJohnsonAlgorithm(std::vector<int>& inputSequence)
     std::cout << RED << "+++++ RECURSIVE CALL ++++++" << RESET << std::endl;
     largerElementSequence = fordJohnsonAlgorithm(largerElementSequence);
 
-    // insert stuff here from the smallerElementSequence to the largerElementSequence when UNWINDING
-    for (size_t i = 0; i < smallerElementSequence.size(); i++) // r ? // here should the jacobsthal stuff be entered to optimize insertion order of the small elements
-    {
-        std::vector<int>::iterator pos = std::lower_bound(largerElementSequence.begin(), largerElementSequence.end(), smallerElementSequence[i]);
-        largerElementSequence.insert(pos, smallerElementSequence[i]); // inserted at the position that lower_bound found closest
-        std::cout << "TEST - smallerElementSequence was added " << smallerElementSequence[i] << ", in loop iteration " << i << std::endl;
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ** JACOBSTHAL INSERT SMALLER ELEMENTS INTO MAIN CHAIN WITH JACOBSTHAL (this needs to be in the loop thats up there when inserting smaller elements sequence stuff)
+    // when this step happens, at that point the smallerElementSequence is filled w half the numbers from the original sequence
+
+
+    
+
+
+
+
+
+    // // ************************************************ jc done 
+
+
+    // ********************BINARY INSERTION************************** (takes more comparisons) (page 185) (will be replaced by Jacobsthal)
+    // insert stuff here from the smallerElementSequence to the largerElementSequence when UNWINDING 
+    // for (size_t i = 0; i < smallerElementSequence.size(); i++) // r ? // here should the jacobsthal stuff be entered to optimize insertion order of the small elements
+    // {
+    //     std::vector<int>::iterator pos = std::lower_bound(largerElementSequence.begin(), largerElementSequence.end(), smallerElementSequence[i]);
+    //     largerElementSequence.insert(pos, smallerElementSequence[i]); // inserted at the position that lower_bound found closest
+    //     std::cout << "TEST - element of smallerElementSequence was added " << smallerElementSequence[i] << ", in loop iteration " << i << std::endl;
+    // }
+    // // ************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // add leftover element
-    if (leftoverFound)
+    if (leftoverFound) // TODO: recheck this, this should not be done in recursion?? only in beginning
     {
         std::vector<int>::iterator pos = std::lower_bound(largerElementSequence.begin(), largerElementSequence.end(), leftoverElement);
         largerElementSequence.insert(pos, leftoverElement); // inserted at the position that lower_bound found closest        
+        std::cout << "leftoverElement = " << leftoverElement << std::endl;
     }
 
-    // ********************BINARY INSERTION**************************
-    // ** JACOBSTHAL INSERT SMALLER ELEMENTS INTO MAIN CHAIN WITH JACOBSTHAL (this needs to be in the loop thats up there when inserting smaller elements sequence stuff)
-    // when this step happens, at that point the smallerElementSequence is filled w half the numbers from the original sequence
-    
     std::cout << GREEN << "returned here - bottom" << RESET << std::endl;
     return largerElementSequence; // TODO: rename to main chain
 }
