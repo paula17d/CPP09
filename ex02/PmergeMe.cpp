@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:57:56 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/11 19:33:46 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/16 02:21:13 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,15 @@ PmergeMe::PmergeMe()
 Your program must be able to use a positive integer sequence as an argument
 */
 // TODO: start w vector for everthing, do deque later
+// TODO: add time measurement (start in vec function and in deque function)
+// TODO: fix stoul error when entering a too large number
 PmergeMe::PmergeMe(char **elementSequence)
 {
     // PARSE AND FILL BOTH CONTAINERS
     fillContainers(elementSequence);
 
-    
     std::vector<int> mainChain = fordJohnsonAlgorithm(this->vec);
     std::cout << "After [vec]: " << mainChain << std::endl;
-    
-    // -- --
-    // 3.4: insert the smaller elements from smaller sequence (jacobsthal numbes -> to determine in which order to insert) (use lower_bound)
-    // 3.5: handle leftover elements from step 3.1 (insert at end)
     
 }
 
@@ -104,33 +101,77 @@ std::vector<int> PmergeMe::fordJohnsonAlgorithm(std::vector<int>& inputSequence)
     
     // enters reaching breaking point (<) at peak when only biggest num left 
     // AND then after if there is only one element (happens every time later when unwinding recursion since numbers get taken and previous level only has the biggest one left each time)
-    std::cout << RED << "+++++ RECURSIVE CALL ++++++" << RESET << std::endl;
+    std::cout << RED << "+++++ RECURSIVE CALL +++++" << RESET << std::endl;
     largerElementSequence = fordJohnsonAlgorithm(largerElementSequence);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+    // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     // ** JACOBSTHAL INSERT SMALLER ELEMENTS INTO MAIN CHAIN WITH JACOBSTHAL (this needs to be in the loop thats up there when inserting smaller elements sequence stuff)
     // when this step happens, at that point the smallerElementSequence is filled w half the numbers from the original sequence
+    // need to remember pairs (which number from pend chain was paired up in beginning)
 
+    
+    // @@@@ part ONE [decide order of insertion]
+    // generate the amount of jacobsthal numbers needed
+    std::vector<int> jacobsthalSequence; 
+    
+    int prev2 = 0; // jt formula needs those two numbers (0, 1) as base to calculate next numbers in following loop
+    int prev1 = 1;
 
+    // building the sequence number by number (0, 1, 1, 3, 5, 11, ...) (without 0, 1) (basically defining ranges (each num is a starting point))
+    while (true)
+    {
+        int nextJtNum = prev1 + 2 * prev2; // b -> previous number, a -> previous previous number
+        if (nextJtNum > static_cast<int>(smallerElementSequence.size())) // .
+            break;
+
+        jacobsthalSequence.push_back(nextJtNum); // add next number to JT sequence
+
+        prev2 = prev1;
+        prev1 = nextJtNum;
+    }
+    std::cout << LIGHT_GREEN << "jacobsthalSequence: " << jacobsthalSequence << RESET << std::endl;
+
+    // take numbers from above and with that insert each range in reverse (1.       3, 2.     5, 4.     11, 10, 9, 8, 7, 6.)
+    std::vector<int> insertionOrder;
+    int previousJtNum = 1;
+
+    for (size_t i = 0; i < jacobsthalSequence.size(); ++i)
+    {
+        int currentJtNum = jacobsthalSequence[i];
+
+        for (int j = currentJtNum; j > previousJtNum; --j) // start at current Jt num, go backwards, until previous jacobsthal num -> for (int j = 5; j > 3; --j) add 4 (so 1 3 2 5 4)
+            insertionOrder.push_back(j);
+
+        if (currentJtNum == 1)
+            insertionOrder.push_back(1);
+
+        previousJtNum = currentJtNum;
+    }
+
+    for (int j = static_cast<int>(smallerElementSequence.size()); j > previousJtNum; --j) // since jt only defines blocks (1, 2-3, 4-5, 6-11,...) but possible to have 8 elements so insert everything thats missing depending on sequence size // ex. 1 3 2 5 4 8 7 6 (even tho next block would be at 11)
+        insertionOrder.push_back(j);
+    
+    std::cout << LIGHT_GREEN << "insertionOrder: " << insertionOrder << RESET << std::endl;
+
+    
+
+    
+
+    // @@@@ part TWO [do actual sorting & insertion]
     
 
 
 
 
+    
 
+    
+
+
+
+    // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     // // ************************************************ jc done 
 
 
@@ -143,14 +184,6 @@ std::vector<int> PmergeMe::fordJohnsonAlgorithm(std::vector<int>& inputSequence)
     //     std::cout << "TEST - element of smallerElementSequence was added " << smallerElementSequence[i] << ", in loop iteration " << i << std::endl;
     // }
     // // ************************************************
-
-
-
-
-
-
-
-
 
 
 
