@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:56:50 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/11 16:41:09 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/17 17:02:24 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <vector>
 #include <deque>
 #include <stdexcept>
+#include <algorithm>
 
 #define RED "\033[31m"
 #define GREEN "\033[32m"

@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:51:02 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/06 18:23:14 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/17 14:22:48 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int main (int argc, char **argv)
     {
         std::cerr << "Error: missing arguments.\n"
               << "Enter a sequence of only positive numbers.\n"
-              << "Usage Example: " << argv[0] << " '4 2 8 5 9 7'" << std::endl;
+              << "Usage Example: " << argv[0] << " '5 2 6 9 4 3 7'" << std::endl;
         return 1;
     }
 

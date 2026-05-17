@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:57:56 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/16 02:21:13 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/17 19:36:44 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,20 +116,20 @@ std::vector<int> PmergeMe::fordJohnsonAlgorithm(std::vector<int>& inputSequence)
     // generate the amount of jacobsthal numbers needed
     std::vector<int> jacobsthalSequence; 
     
-    int prev2 = 0; // jt formula needs those two numbers (0, 1) as base to calculate next numbers in following loop
-    int prev1 = 1;
+    int prevPrevNum = 0; // jt formula needs those two numbers (0, 1) as base to calculate next numbers in following loop
+    int prevNum = 1;
 
     // building the sequence number by number (0, 1, 1, 3, 5, 11, ...) (without 0, 1) (basically defining ranges (each num is a starting point))
     while (true)
     {
-        int nextJtNum = prev1 + 2 * prev2; // b -> previous number, a -> previous previous number
+        int nextJtNum = prevNum + 2 * prevPrevNum; // b -> previous number, a -> previous previous number
         if (nextJtNum > static_cast<int>(smallerElementSequence.size())) // .
             break;
 
         jacobsthalSequence.push_back(nextJtNum); // add next number to JT sequence
 
-        prev2 = prev1;
-        prev1 = nextJtNum;
+        prevPrevNum = prevNum;
+        prevNum = nextJtNum;
     }
     std::cout << LIGHT_GREEN << "jacobsthalSequence: " << jacobsthalSequence << RESET << std::endl;
 
@@ -156,18 +156,37 @@ std::vector<int> PmergeMe::fordJohnsonAlgorithm(std::vector<int>& inputSequence)
     std::cout << LIGHT_GREEN << "insertionOrder: " << insertionOrder << RESET << std::endl;
 
     
-
-    
-
     // @@@@ part TWO [do actual sorting & insertion]
-    
+    // --NOW: that i got the order that needs to be implemented (1, 3, 2, 5, 4,  ...) ,
+    //  match them w the index + 1 from the smallerElementSequence!
+    for (int i = 0; i < static_cast<int>(insertionOrder.size()); i++)
+    {
+        int findIndex = insertionOrder[i];
+        int valueToInsert = smallerElementSequence[findIndex - 1]; // this needs to be inserted in he largerElemenSequence/mainChain (with .insert)
+        // (-1) bc ex. looking for third element in smallerElementSequence which has index 2
+        std::cout << "next Element to be inserted into mainChain: " << valueToInsert << std::endl;
+
+        // find the pair partner of the smallerElementSequence Number in the LargerElementSequence (still preserved when recursion unwinding happens)
+        // TODO: fix pair look up -> currently broken
+        int pairLargerPartner = pairs[valueToInsert].second; // TODO: doesnt work when there are duplicate numbers! (subject error handling)
+        std::cout << "pairLargerPartner: " << pairLargerPartner << std::endl;
+
+        // --THEN: insert it w upper/lower_bound using the range w partner
+        // do i need to figure out the position that the one is in largeElemebtSequence to see where do i start)
+        // FIND larger Element in mian chani
+        // TODO: check if int or unsigned long or whatever the main starts with
+        auto posLargerPartner = std::find(largerElementSequence.begin(), largerElementSequence.end(), pairLargerPartner);
+        // LOWER_BOUND begin of main chain until position of larger Element in main chain, smallerElemetSequence[findIndex - 1]
+        auto it = std::upper_bound(largerElementSequence.begin(), posLargerPartner, valueToInsert); // finds the proper place within that range
+        
+        largerElementSequence.insert(it, valueToInsert);
+
+
+        
+    }
 
 
 
-
-    
-
-    
 
 
 
