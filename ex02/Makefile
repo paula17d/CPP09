@@ -6,13 +6,13 @@
 #    By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/05/05 21:47:05 by pdrettas          #+#    #+#              #
-#    Updated: 2026/05/06 15:51:39 by pdrettas         ###   ########.fr        #
+#    Updated: 2026/05/17 21:20:47 by pdrettas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = PmergeMe
 
-SRC			=	./main.cpp ./PmergeMe.cpp
+SRC			=	./main.cpp ./PmergeMe.cpp ./algorithmVector.cpp
 				
 OBJ			=	$(SRC:.cpp=.o)
 			
