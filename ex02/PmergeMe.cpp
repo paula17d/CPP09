@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:57:56 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/17 21:22:40 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/18 01:23:36 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,35 @@ PmergeMe::PmergeMe()
 Your program must be able to use a positive integer sequence as an argument
 */
 // TODO: start w vector for everthing, do deque later
-// TODO: add time measurement (start in vec function and in deque function)
 // TODO: fix stoul error when entering a too large number
-PmergeMe::PmergeMe(char **elementSequence)
+// TODO: change the printing structure at end like in subject described
+PmergeMe::PmergeMe(char **inputSequence)
 {
-    fillContainers(elementSequence);
-
+    parseInputAndFillContainers(inputSequence);
+    std::cout << "Before: " << vec << std::endl;
+    
+    std::chrono::high_resolution_clock::time_point	start;
+	std::chrono::high_resolution_clock::time_point	end;
+	std::chrono::duration<double, std::micro>		elapsed;
+    
+    // TODO: put each container section in a "helper" function again and call it Sort or sth (less messy w all the time & print stuff together) -> measureTimeAndSortSequence
+    // --SORT W VECTOR CONTAINER
+    start = std::chrono::high_resolution_clock::now();
     std::vector<int> mainChain = fordJohnsonAlgorithm(this->vec);
+    end = std::chrono::high_resolution_clock::now();
+    elapsed = end - start;
+    
     std::cout << "After [vec]: " << mainChain << std::endl;
-
-    // std::vector<int> mainChain = fordJohnsonAlgorithm(this->deque);
+    std::cout << "Time to process a range of " << mainChain.size() << " elements with std::vector : " << elapsed.count() << " us" << std::endl;
+    
+    // --SORT W DEQUE CONTAINER
+    // start = std::chrono::high_resolution_clock::now();
+    // std::deque<int> mainChain = fordJohnsonAlgorithm(this->deq);
+    // end = std::chrono::high_resolution_clock::now();
+    // elapsed = end - start;
+    
     // std::cout << "After [deque]: " << mainChain << std::endl;
+    // std::cout << "Time to process a range of " << mainChain.size() << " elements with std::deque : " << elapsed.count() << " us" << std::endl;
 }
 
 // TODO: edit these accordingly
@@ -49,13 +67,13 @@ PmergeMe& PmergeMe::operator=(const PmergeMe& other)
 PmergeMe::~PmergeMe()
 {}
 
-void PmergeMe::fillContainers(char **numSequence)
+void PmergeMe::parseInputAndFillContainers(char **inputSequence)
 {
     // step 1: parse char** to make sure input is all positive integers (argv[i] = one number)
     int i = 1;
-    while (numSequence[i])
+    while (inputSequence[i])
     {
-        std::string s = numSequence[i];
+        std::string s = inputSequence[i];
 
         if (s.empty())
             throw std::invalid_argument("Error: empty argument.");
@@ -73,12 +91,9 @@ void PmergeMe::fillContainers(char **numSequence)
         
         // step 2: store them all in a container (once in vec, once in deque)
         vec.push_back(num);
-        deque.push_back(num);
+        deq.push_back(num);
         i++;
     }
-    
-    std::cout << "Before [vec]: " << vec << std::endl;
-    std::cout << "Before [deque]: " << deque << std::endl;
 }
 
 std::ostream &operator<<(std::ostream &out, const std::vector<int> &vec)
