@@ -25,7 +25,6 @@ std::vector<int> PmergeMe::fordJohnsonAlgorithm(std::vector<int> &inputSequence)
     std::vector<std::pair<int, int>> pairs;
     std::vector<int> smallerElementSequence;
     std::vector<int> largerElementSequence;
-    bool firstPairing = true; // TODO: change naming
     
     if (inputSequence.size() <= 1) // so the recursion doesnt call itself forever (starts unwinding phase)
     {
@@ -36,7 +35,7 @@ std::vector<int> PmergeMe::fordJohnsonAlgorithm(std::vector<int> &inputSequence)
     unsigned int leftoverElement; // TODO: check variable type for input sequence numbers in general (int, unsigned int, unsigned long??)
     bool leftoverFound = false;
     extractLeftoverElement(inputSequence, leftoverElement, leftoverFound);
-    createAndSortPairs(firstPairing, inputSequence, pairs, smallerElementSequence, largerElementSequence);
+    createAndSortPairs(inputSequence, pairs, smallerElementSequence, largerElementSequence);
 
     std::cout << RED << "+++++ RECURSIVE CALL +++++" << RESET << std::endl;
     largerElementSequence = fordJohnsonAlgorithm(largerElementSequence); // enters reaching breaking point (<) at peak when only biggest num left 
@@ -68,7 +67,7 @@ void PmergeMe::extractLeftoverElement(std::vector<int> &inputSequence, unsigned 
 }
 
 // -- sort input numbers into larger Elements and smaller Elements (one pair per loop)
-void PmergeMe::createAndSortPairs(bool &firstPairing, std::vector<int> &inputSequence, std::vector<std::pair<int, int>> &pairs, std::vector<int> &smallerElementSequence, std::vector<int> &largerElementSequence)
+void PmergeMe::createAndSortPairs(std::vector<int> &inputSequence, std::vector<std::pair<int, int>> &pairs, std::vector<int> &smallerElementSequence, std::vector<int> &largerElementSequence)
 {
     std::vector<int>::const_iterator it;
     
@@ -93,9 +92,6 @@ void PmergeMe::createAndSortPairs(bool &firstPairing, std::vector<int> &inputSeq
         std::cout << "sorted pair = {" << pairs.back().first << ", " << pairs.back().second << "}" << std::endl;
         std::cout << ORANGE << "$comparison$" << RESET << std::endl;
         
-        if (firstPairing)
-            originalPairs = pairs;
-        
         // **** 3.2: "split up" each pair internally (create two sequences: larger elements sequence, smaller elements sequence)
         // put left num in A sequence, and right num in B sequence
         smallerElementSequence.push_back(pairs.back().first);
@@ -104,7 +100,6 @@ void PmergeMe::createAndSortPairs(bool &firstPairing, std::vector<int> &inputSeq
         std::cout << "largerElementSequence = " << largerElementSequence << std::endl;
 
     }
-    firstPairing = false;
 }
 
 // @@@@ part ONE [decide order of insertion]
@@ -158,26 +153,27 @@ void PmergeMe::generateJacobsthalInsertionOrder(std::vector<int> &insertionOrder
 // using jacobsthal and binary search together (less comparisons overall)
 void PmergeMe::insertPendElementsIntoMainChain(std::vector<int> &insertionOrder, std::vector<std::pair<int, int>> &pairs, std::vector<int> &smallerElementSequence, std::vector<int> &largerElementSequence)
 {
-    (void) pairs;
-    for (int i = 0; i < static_cast<int>(insertionOrder.size()); i++)
+    // TODO: the first element in smallerElementSequence is inserted at the very beginning of the main chain right away. due to the algorithm logic, no extra need to do the loop stuff. 
+
+    for (int i = 0; i < static_cast<int>(insertionOrder.size()); i++) // loop goes thru jacobsthal insertion order (1, 3, 2, 5, 4, ...)
     {
-        int findIndex = insertionOrder[i];
-        int valueToInsert = smallerElementSequence[findIndex - 1]; // this needs to be inserted in he largerElemenSequence/mainChain (with .insert) // (-1) bc ex. looking for third element in smallerElementSequence which has index 2
-        std::cout << PINK << "next smaller Element to be inserted into mainChain: " << valueToInsert << RESET << std::endl;
+        int index = insertionOrder[i] - 1; // index needs to be -1 bc (vector) indexes start w 0 // (-1) bc ex. looking for third element in smallerElementSequence which has index 2
+        int elementToInsert = smallerElementSequence[index]; // this needs to be inserted in he largerElemenSequence/mainChain (with .insert) 
+        std::cout << PINK << "next smaller Element to be inserted into mainChain: " << elementToInsert << RESET << std::endl;
 
-        // find the pair partner of the smallerElementSequence Number in the LargerElementSequence (still preserved when recursion unwinding happens) -> NOT from the first ever pair, but most recent
-        // TODO: fix pair look up -> currently broken (see below)
-        // TODO MONDAY: NEXT STEP -> find the pair partner of the smaller Element (saved in the originalPairs), potentially save via starting index, and then find through index!!!
-        int pairLargerPartner = originalPairs[valueToInsert].second; // TODO: valueToInsert is fundamenataly wrong as input there // TODO: doesnt work when there are duplicate numbers! (subject error handling)
-        std::cout << PINK << "pairLargerPartner: " << pairLargerPartner << RESET << std::endl;
+        // at this point, we have the actual number that we want to insert.
+        // NOW, we need to find its larger partner from initial pair (which also appears in the largerElementsequence)
+        int largerPairPartner = pairs[index].second; // the index in the smallerElementSequence is the same index in vec pairs for the same number.
+        std::cout << PINK << "pairLargerPartner: " << largerPairPartner << RESET << std::endl;
 
-        // --THEN: insert it w upper/lower_bound using the range w partner
-        // FIND larger Element in main chain
-        // TODO: check if int or unsigned long or whatever the main starts with
-        auto posLargerPartner = std::find(largerElementSequence.begin(), largerElementSequence.end(), pairLargerPartner);
-        auto it = std::upper_bound(largerElementSequence.begin(), posLargerPartner, valueToInsert); // finds the proper place within that range
-        
-        largerElementSequence.insert(it, valueToInsert);   
+        // look for position of largerPairPartner in largerElementSequence/main chain
+        auto positionLargerPairPartner = std::find(largerElementSequence.begin(), largerElementSequence.end(), largerPairPartner);
+
+        // find where to insert smaller element based on its number in the range of beginning to larger pair element in main chain
+        auto positionElementToInsert = std::lower_bound(largerElementSequence.begin(), positionLargerPairPartner, elementToInsert);
+
+        // insert smaller element
+        largerElementSequence.insert(positionElementToInsert, elementToInsert);
     }
 }
 

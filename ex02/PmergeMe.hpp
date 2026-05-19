@@ -37,7 +37,7 @@ class PmergeMe
     private:
         std::vector<int> vec; // TODO: change naming later
         std::deque<int> deq;
-        std::vector<std::pair<int, int>> originalPairs;
+
         // constructor
         PmergeMe(); // bc should only be instantiated w integers
     
@@ -55,7 +55,7 @@ class PmergeMe
         void parseInputAndFillContainers(char **inputSequence);
         std::vector<int> fordJohnsonAlgorithm(std::vector<int> &sequence);
         void extractLeftoverElement(std::vector<int> &inputSequence, unsigned int &leftoverElement, bool &leftoverFound);
-        void createAndSortPairs(bool &firstPairing, std::vector<int> &inputSequence, std::vector<std::pair<int, int>> &pairs, std::vector<int> &smallerElementSequence, std::vector<int> &largerElementSequence);
+        void createAndSortPairs(std::vector<int> &inputSequence, std::vector<std::pair<int, int>> &pairs, std::vector<int> &smallerElementSequence, std::vector<int> &largerElementSequence);
         void calculateJacobsthalSequence(std::vector<int> &jacobsthalSequence, std::vector<int> &smallerElementSequence);
         void generateJacobsthalInsertionOrder(std::vector<int> &insertionOrder, std::vector<int> &jacobsthalSequence, std::vector<int> &smallerElementSequence);
         void insertPendElementsIntoMainChain(std::vector<int> &insertionOrder, std::vector<std::pair<int, int>> &pairs, std::vector<int> &smallerElementSequence, std::vector<int> &largerElementSequence);
