@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauladrettas <pauladrettas@student.42.f    +#+  +:+       +#+        */
+/*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:51:02 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/20 03:21:25 by pauladretta      ###   ########.fr       */
+/*   Updated: 2026/05/20 19:44:17 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,6 @@ int main (int argc, char **argv)
     {
         std::cerr << e.what() << std::endl;
     }
-
-    // std::cout << argv[1] << std::endl;
-    // std::cout << argv[2] << std::endl;
-    // std::cout << argv[3] << std::endl;
-
-
+    
     return 0;
 }
