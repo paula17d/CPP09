@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauladrettas <pauladrettas@student.42.f    +#+  +:+       +#+        */
+/*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:57:56 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/20 03:01:50 by pauladretta      ###   ########.fr       */
+/*   Updated: 2026/05/20 22:31:46 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,50 +18,14 @@ PmergeMe::PmergeMe()
 /*
 Your program must be able to use a positive integer sequence as an argument
 */
-// TODO: start w vector for everthing, do deque later
-// TODO: change the printing structure at end like in subject described
 PmergeMe::PmergeMe(char **inputSequence)
 {
     parseInputAndFillContainers(inputSequence);
-    std::cout << "Before: " << vec << std::endl;
     
-    std::chrono::high_resolution_clock::time_point	start;
-	std::chrono::high_resolution_clock::time_point	end;
-	std::chrono::duration<double, std::micro>		elapsed;
-    
-    // TODO: put each container section in a "helper" function again and call it Sort or sth (less messy w all the time & print stuff together) -> measureTimeAndSortSequence
-    // --SORT W VECTOR CONTAINER
-    start = std::chrono::high_resolution_clock::now();
-    std::vector<unsigned int> mainChain = fordJohnsonAlgorithm(this->vec);
-    end = std::chrono::high_resolution_clock::now();
-    elapsed = end - start;
-    
-    
-    std::cout << "After [vec]: " << mainChain << std::endl;
-    std::cout << "Time to process a range of " << mainChain.size() << " elements with std::vector : " << elapsed.count() << " us" << std::endl;
-    
-    if (!std::is_sorted(mainChain.begin(), mainChain.end()))
-        std::cout << "--NOT SORTED--" << std::endl;
-    else
-        std::cout << "--SORTED--" << std::endl;
-
-        
-    // --SORT W DEQUE CONTAINER
-    // start = std::chrono::high_resolution_clock::now();
-    // std::deque<int> mainChain = fordJohnsonAlgorithm(this->deq);
-    // end = std::chrono::high_resolution_clock::now();
-    // elapsed = end - start;
-    
-    // std::cout << "After [deque]: " << mainChain << std::endl;
-    // std::cout << "Time to process a range of " << mainChain.size() << " elements with std::deque : " << elapsed.count() << " us" << std::endl;
-
-    // if (!std::is_sorted(mainChain.begin(), mainChain.end()))
-    //     std::cout << "--NOT SORTED--" << std::endl;
-    // else
-    //     std::cout << "--SORTED--" << std::endl;
+    sortContainerAndMeasureTime(this->vec, "std::vector");
+    sortContainerAndMeasureTime(this->deq, "std::deque");
 }
 
-// TODO: edit these accordingly
 PmergeMe::PmergeMe(const PmergeMe& other) 
 {
     vec = other.vec;
@@ -105,7 +69,7 @@ void PmergeMe::parseInputAndFillContainers(char **inputSequence)
         {
             unsigned long value = std::stoul(s); // stoul does throw std::out_of_range(); therefore catch it here for own error
 
-            if (value > INT_MAX)
+            if (value > UINT_MAX)
                 throw std::runtime_error("Error: number out of range.");
 
             num = static_cast<unsigned int>(value);
@@ -115,13 +79,67 @@ void PmergeMe::parseInputAndFillContainers(char **inputSequence)
             throw std::runtime_error("Error: number out of range.");
         }
 
-        // std::cout << "num stol = " << num << std::endl;
-
         // step 2: store them all in a container (once in vec, once in deque)
         vec.push_back(num);
         deq.push_back(num);
         i++;
     } 
+    
+    std::cout << "Before: ";
+    for (size_t i = 0; i < vec.size(); i++)
+    {
+        std::cout << vec[i] << " ";
+        if (i == 20)
+        {
+            std::cout << "[...]";
+            break;
+        }
+    }
+    std::cout << std::endl << std::endl;
+}
+
+template <typename Container>
+void PmergeMe::sortContainerAndMeasureTime(Container c, const std::string& containerName)
+{
+    std::chrono::high_resolution_clock::time_point	start;
+	std::chrono::high_resolution_clock::time_point	end;
+	std::chrono::duration<double, std::micro>		elapsed;
+    const size_t                                    inputSize = c.size();
+    
+    start = std::chrono::high_resolution_clock::now();
+    
+    Container sortedSequence = fordJohnsonAlgorithm(c);
+    
+    end = std::chrono::high_resolution_clock::now();
+    elapsed = end - start;
+    
+    printSortedSequence(sortedSequence, elapsed, inputSize, containerName);
+}
+
+template <typename Container>
+void PmergeMe::printSortedSequence(const Container &sortedSequence, std::chrono::duration<double, std::micro> &elapsed, const size_t &inputSize, const std::string& containerName)
+{   
+    std::cout << "After: ";
+    for (size_t i = 0; i < sortedSequence.size(); i++)
+    {
+        std::cout << sortedSequence[i] << " ";
+        if (i == 20)
+        {
+            std::cout << "[...]";
+            break;
+        }
+    }
+    std::cout << std::endl;
+
+    std::cout << "Time to process a range of " << inputSize << \
+        " elements with [" << containerName << "] : " << \
+        elapsed.count() << " us" << std::endl;
+
+    if (!std::is_sorted(sortedSequence.begin(), sortedSequence.end()))
+        std::cout << RED << "Sequence is not sorted." << RESET << std::endl;
+    else
+        std::cout << GREEN << "Sequence has successfully been sorted." << RESET << std::endl;    
+    std::cout << std::endl;
 }
 
 std::ostream &operator<<(std::ostream &out, const std::vector<unsigned int> &vec)

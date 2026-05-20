@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauladrettas <pauladrettas@student.42.f    +#+  +:+       +#+        */
+/*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:56:50 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/20 01:34:37 by pauladretta      ###   ########.fr       */
+/*   Updated: 2026/05/20 22:25:13 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 #include <stdexcept>
 #include <algorithm>
 #include <chrono>
+#include <climits>
+#include <string>
 
 #define RED "\033[31m"
 #define GREEN "\033[32m"
@@ -28,10 +30,11 @@
 #define PINK "\033[38;5;205m"
 #define RESET "\033[0m"
 
-/*
-You must use at least two different containers in your code 
-to validate this exercise.
-*/
+typedef std::vector<unsigned int> vector;
+typedef std::deque<unsigned int> deque;
+typedef std::vector<std::pair<unsigned int, unsigned int>> vectorPair;
+typedef std::deque<std::pair<unsigned int, unsigned int>> dequePair;
+
 class PmergeMe
 {
     private:
@@ -39,7 +42,7 @@ class PmergeMe
         std::deque<unsigned int> deq;
 
         // constructor
-        PmergeMe(); // bc should only be instantiated w integers
+        PmergeMe();
     
     public:
         // personalized constructor
@@ -51,18 +54,34 @@ class PmergeMe
         // destructor
         ~PmergeMe();
         
-        // member functions
         void parseInputAndFillContainers(char **inputSequence);
-        std::vector<unsigned int> fordJohnsonAlgorithm(std::vector<unsigned int> &sequence);
-        void extractLeftoverElement(std::vector<unsigned int> &inputSequence, unsigned int &leftoverElement, bool &leftoverFound);
-        void createAndSortPairs(std::vector<unsigned int> &inputSequence, std::vector<std::pair<unsigned int, unsigned int>> &pairs, std::vector<unsigned int> &smallerElementSequence, std::vector<unsigned int> &largerElementSequence);
-        void calculateJacobsthalSequence(std::vector<unsigned int> &jacobsthalSequence, std::vector<unsigned int> &smallerElementSequence);
-        void generateJacobsthalInsertionOrder(std::vector<unsigned int> &insertionOrder, std::vector<unsigned int> &jacobsthalSequence, std::vector<unsigned int> &smallerElementSequence);
-        void insertPendElementsIntoMainChain(std::vector<unsigned int> &insertionOrder, std::vector<std::pair<unsigned int, unsigned int>> &pairs, std::vector<unsigned int> &smallerElementSequence, std::vector<unsigned int> &largerElementSequence);
-        void addLeftoverElement(unsigned int &leftoverElement, bool &leftoverFound, std::vector<unsigned int> &largerElementSequence);
-    };
+        
+        template <typename Container>
+        void sortContainerAndMeasureTime(Container c, const std::string& containerName);
 
-std::ostream &operator<<(std::ostream &out, const std::vector<unsigned int> &vec);
-std::ostream &operator<<(std::ostream &out, const std::deque<unsigned int> &deque);
+        template <typename Container>
+        void printSortedSequence(const Container &sortedSequence, std::chrono::duration<double, std::micro> &elapsed, const size_t &inputSize, const std::string& containerName);
+        
+        // member functions [vec]
+        vector fordJohnsonAlgorithm(vector &sequence);
+        void extractLeftoverElement(vector &inputSequence, unsigned int &leftoverElement, bool &leftoverFound);
+        void createAndSortPairs(vector &inputSequence, vectorPair &pairs, vector &pendElements, vector &mainChain);
+        void calculateJacobsthalSequence(vector &jacobsthalSequence, vector &pendElements);
+        void generateJacobsthalInsertionOrder(vector &insertionOrder, vector &jacobsthalSequence, vector &pendElements);
+        void insertPendElementsIntoMainChain(vector &insertionOrder, vectorPair &pairs, vector &pendElements, vector &mainChain);
+        void addLeftoverElement(unsigned int &leftoverElement, bool &leftoverFound, vector &mainChain);
+
+        // member functions [deq]
+        deque fordJohnsonAlgorithm(deque &sequence);
+        void extractLeftoverElement(deque &inputSequence, unsigned int &leftoverElement, bool &leftoverFound);
+        void createAndSortPairs(deque &inputSequence, dequePair &pairs, deque &pendElements, deque &mainChain);
+        void calculateJacobsthalSequence(deque &jacobsthalSequence, deque &pendElements);
+        void generateJacobsthalInsertionOrder(deque &insertionOrder, deque &jacobsthalSequence, deque &pendElements);
+        void insertPendElementsIntoMainChain(deque &insertionOrder, dequePair &pairs, deque &pendElements, deque &mainChain);
+        void addLeftoverElement(unsigned int &leftoverElement, bool &leftoverFound, deque &mainChain);
+};
+
+std::ostream &operator<<(std::ostream &out, const vector &vec);
+std::ostream &operator<<(std::ostream &out, const deque &deque);
 
 #endif
