@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pauladrettas <pauladrettas@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:56:50 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/18 01:36:36 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/20 01:34:37 by pauladretta      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ to validate this exercise.
 class PmergeMe
 {
     private:
-        std::vector<int> vec; // TODO: change naming later
-        std::deque<int> deq;
+        std::vector<unsigned int> vec;
+        std::deque<unsigned int> deq;
 
         // constructor
         PmergeMe(); // bc should only be instantiated w integers
@@ -53,17 +53,16 @@ class PmergeMe
         
         // member functions
         void parseInputAndFillContainers(char **inputSequence);
-        std::vector<int> fordJohnsonAlgorithm(std::vector<int> &sequence);
-        void extractLeftoverElement(std::vector<int> &inputSequence, unsigned int &leftoverElement, bool &leftoverFound);
-        void createAndSortPairs(std::vector<int> &inputSequence, std::vector<std::pair<int, int>> &pairs, std::vector<int> &smallerElementSequence, std::vector<int> &largerElementSequence);
-        void calculateJacobsthalSequence(std::vector<int> &jacobsthalSequence, std::vector<int> &smallerElementSequence);
-        void generateJacobsthalInsertionOrder(std::vector<int> &insertionOrder, std::vector<int> &jacobsthalSequence, std::vector<int> &smallerElementSequence);
-        void insertPendElementsIntoMainChain(std::vector<int> &insertionOrder, std::vector<std::pair<int, int>> &pairs, std::vector<int> &smallerElementSequence, std::vector<int> &largerElementSequence);
-        void addLeftoverElement(unsigned int &leftoverElement, bool &leftoverFound, std::vector<int> &largerElementSequence);
-        
+        std::vector<unsigned int> fordJohnsonAlgorithm(std::vector<unsigned int> &sequence);
+        void extractLeftoverElement(std::vector<unsigned int> &inputSequence, unsigned int &leftoverElement, bool &leftoverFound);
+        void createAndSortPairs(std::vector<unsigned int> &inputSequence, std::vector<std::pair<unsigned int, unsigned int>> &pairs, std::vector<unsigned int> &smallerElementSequence, std::vector<unsigned int> &largerElementSequence);
+        void calculateJacobsthalSequence(std::vector<unsigned int> &jacobsthalSequence, std::vector<unsigned int> &smallerElementSequence);
+        void generateJacobsthalInsertionOrder(std::vector<unsigned int> &insertionOrder, std::vector<unsigned int> &jacobsthalSequence, std::vector<unsigned int> &smallerElementSequence);
+        void insertPendElementsIntoMainChain(std::vector<unsigned int> &insertionOrder, std::vector<std::pair<unsigned int, unsigned int>> &pairs, std::vector<unsigned int> &smallerElementSequence, std::vector<unsigned int> &largerElementSequence);
+        void addLeftoverElement(unsigned int &leftoverElement, bool &leftoverFound, std::vector<unsigned int> &largerElementSequence);
     };
 
-std::ostream &operator<<(std::ostream &out, const std::vector<int> &vec);
-std::ostream &operator<<(std::ostream &out, const std::deque<int> &deque);
+std::ostream &operator<<(std::ostream &out, const std::vector<unsigned int> &vec);
+std::ostream &operator<<(std::ostream &out, const std::deque<unsigned int> &deque);
 
 #endif
