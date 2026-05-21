@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 21:47:09 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/20 23:25:40 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/22 00:01:18 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,29 @@
 RPN::RPN()
 {}
 
-RPN::RPN(std::string equation) // TODO: check for edge cases again!
+RPN::RPN(std::string equation) 
 {
     for (unsigned long i = 0; i < equation.size(); i++)
     {
-        if (equation[i] >= 48 && equation[i] <= 57)
+        // parse number
+        if (equation[i] >= '0' && equation[i] <= '9')
         {
+            // no multi-digit numbers (ex. 54)
+            if (i > 0 && equation[i - 1] >= '0' && equation[i - 1] <= '9')
+                throw std::runtime_error("Error: invalid RPN expression.");
+
+            // previous char shouldnt be a digit
+            if (i > 0 && equation[i - 1] != ' ')
+                throw std::runtime_error("Error: invalid RPN expression.");
+
+            // next char should be space or end of string
+            if (i + 1 < equation.size() && equation[i + 1] != ' ')
+                throw std::runtime_error("Error: invalid RPN expression.");
+
             int num = equation[i] - '0';
             _storage.push_back(num);
         }
+        // parse operator
         else if (equation[i] == '+' || equation[i] == '-' || equation[i] == '/' || equation[i] == '*')
         {
             if (_storage.size() < 2)
@@ -42,12 +56,18 @@ RPN::RPN(std::string equation) // TODO: check for edge cases again!
             else if (operatorType == '-')
                 result = numTwo - numOne;
             else if (operatorType == '/')
+            {
+                if (numOne == 0)
+                    throw std::runtime_error("Error: division by zero.");
+
                 result = numTwo / numOne;
+            }
             else if (operatorType == '*')
                 result = numTwo * numOne;
             
             _storage.push_back(result);
         }
+        // skip space
         else if (equation[i] == ' ')
         {}
         else
@@ -55,7 +75,7 @@ RPN::RPN(std::string equation) // TODO: check for edge cases again!
     }
 
     // check how many numbers are left in the stack
-    if (_storage.size() > 1)
+    if (_storage.size() != 1)
         throw std::runtime_error("Error: invalid RPN expression.");
     
     // print result
@@ -63,7 +83,7 @@ RPN::RPN(std::string equation) // TODO: check for edge cases again!
     std::cout << equationResult << std::endl;
 }
 
-RPN::RPN(const RPN& other) 
+RPN::RPN(const RPN& other)
 {
     _storage = other._storage;
 }

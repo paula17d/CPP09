@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 21:47:42 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/20 23:25:26 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/22 00:01:03 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,9 @@ class RPN
 {
     private:
         std::list<int> _storage;
+        
         // constructor
-        RPN(); // bc should only be instantiated w equation
+        RPN();
     
     public:
         // personalized constructor

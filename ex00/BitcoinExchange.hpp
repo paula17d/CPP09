@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/30 11:10:02 by pauladretta       #+#    #+#             */
-/*   Updated: 2026/05/03 23:58:12 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/21 23:52:33 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,12 @@
 #define LIGHT_GREEN "\033[38;5;120m"
 #define RESET "\033[0m"
 
-// TODO: check for leaks
-
 class BitcoinExchange
 {
     private:
         std::map<std::string, float> _database;
 
-        struct Result // TODO: initialize??
+        struct Result
         {
             std::string date;
             float value;
@@ -42,7 +40,7 @@ class BitcoinExchange
             std::string errorMsg;
         };
         // Default constructor
-        BitcoinExchange(); // to not instantiate 
+        BitcoinExchange();
 
     public:
         // Personalized constructor

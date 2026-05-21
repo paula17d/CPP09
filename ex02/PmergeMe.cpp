@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:57:56 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/20 22:31:46 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/22 00:41:45 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,6 @@
 PmergeMe::PmergeMe()
 {}
 
-/*
-Your program must be able to use a positive integer sequence as an argument
-*/
 PmergeMe::PmergeMe(char **inputSequence)
 {
     parseInputAndFillContainers(inputSequence);
@@ -67,7 +64,7 @@ void PmergeMe::parseInputAndFillContainers(char **inputSequence)
         unsigned int num;
         try 
         {
-            unsigned long value = std::stoul(s); // stoul does throw std::out_of_range(); therefore catch it here for own error
+            unsigned long value = std::stoul(s);
 
             if (value > UINT_MAX)
                 throw std::runtime_error("Error: number out of range.");
@@ -99,7 +96,7 @@ void PmergeMe::parseInputAndFillContainers(char **inputSequence)
 }
 
 template <typename Container>
-void PmergeMe::sortContainerAndMeasureTime(Container c, const std::string& containerName)
+void PmergeMe::sortContainerAndMeasureTime(Container &c, const std::string& containerName)
 {
     std::chrono::high_resolution_clock::time_point	start;
 	std::chrono::high_resolution_clock::time_point	end;
@@ -142,7 +139,7 @@ void PmergeMe::printSortedSequence(const Container &sortedSequence, std::chrono:
     std::cout << std::endl;
 }
 
-std::ostream &operator<<(std::ostream &out, const std::vector<unsigned int> &vec)
+std::ostream& operator<<(std::ostream& out, const vector& vec)
 {
     std::vector<unsigned int>::const_iterator it;
 
@@ -154,7 +151,7 @@ std::ostream &operator<<(std::ostream &out, const std::vector<unsigned int> &vec
     return out;
 }
 
-std::ostream &operator<<(std::ostream &out, const std::deque<unsigned int> &deque)
+std::ostream& operator<<(std::ostream& out, const deque& deque)
 {
     std::deque<unsigned int>::const_iterator it;
 

@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/30 11:14:34 by pauladretta       #+#    #+#             */
-/*   Updated: 2026/05/04 01:12:00 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/22 00:49:01 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,10 @@ void BitcoinExchange::loadDatabase()
     // open file
     std::ifstream fileStream("data.csv");
     if (!fileStream)
+    {
         std::cerr << RED << "Error: could not open database file (data.csv)." << RESET << std::endl;
+        return;
+    }
     
     // get line / skip column header
     std::string row;
@@ -38,7 +41,7 @@ void BitcoinExchange::loadDatabase()
     while (getline(fileStream, row))
     {
         std::string date = row.substr(0, 10);
-        float exchangeRate = std::atof(row.substr(11).c_str()); //
+        float exchangeRate = std::atof(row.substr(11).c_str());
         _database.insert(std::make_pair(date, exchangeRate));
     } 
 }
@@ -50,7 +53,10 @@ void BitcoinExchange::processInputFile(const std::string &file)
     // -- FILE --
     std::ifstream fileStream(file);
     if (!fileStream)
+    {
         std::cerr << RED << "Error: could not open file." << RESET << std::endl;
+        return;   
+    }
     
     // -- HEADER --
     std::string row;
@@ -199,7 +205,6 @@ bool BitcoinExchange::isValidDate(const std::string &date)
 /*
 A year is a leap year if it is divisible by 4, 
 except for century years (ending in 00) which must be divisible by 400. 
-Formula: (Year % 4 == 0 AND Year % 100 != 0) OR (Year % 400 == 0). 
 For instance, 2024 is a leap year (divisible by 4), 1900 was not (divisible by 100 but not 400), 
 and 2000 was.
 */
@@ -216,7 +221,7 @@ bool BitcoinExchange::printError(Result &res)
         return true;
     }
 
-    return false; // no error printed
+    return false;
 }
 
 /*
@@ -230,7 +235,7 @@ void BitcoinExchange::computeRowValueWithExchangeRate(Result &res)
     {
         it = _database.lower_bound(res.date);
         
-        // edgecase (if input.csv date is too early for data.csv)
+        // if input.csv date is too early for data.csv
         if (it == _database.begin())
         {
             std::cerr << RED << "Error: no Bitcoin exchange rate available yet for this date." << RESET << std::endl;

@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/06 15:56:50 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/20 22:25:13 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/22 00:41:10 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@
 #define PINK "\033[38;5;205m"
 #define RESET "\033[0m"
 
-typedef std::vector<unsigned int> vector;
-typedef std::deque<unsigned int> deque;
-typedef std::vector<std::pair<unsigned int, unsigned int>> vectorPair;
-typedef std::deque<std::pair<unsigned int, unsigned int>> dequePair;
+using vector = std::vector<unsigned int>;
+using deque = std::deque<unsigned int>;
+using vectorPair = std::vector<std::pair<unsigned int, unsigned int>>;
+using dequePair = std::deque<std::pair<unsigned int, unsigned int>>;
 
 class PmergeMe
 {
@@ -57,7 +57,7 @@ class PmergeMe
         void parseInputAndFillContainers(char **inputSequence);
         
         template <typename Container>
-        void sortContainerAndMeasureTime(Container c, const std::string& containerName);
+        void sortContainerAndMeasureTime(Container &c, const std::string& containerName);
 
         template <typename Container>
         void printSortedSequence(const Container &sortedSequence, std::chrono::duration<double, std::micro> &elapsed, const size_t &inputSize, const std::string& containerName);
@@ -81,7 +81,7 @@ class PmergeMe
         void addLeftoverElement(unsigned int &leftoverElement, bool &leftoverFound, deque &mainChain);
 };
 
-std::ostream &operator<<(std::ostream &out, const vector &vec);
-std::ostream &operator<<(std::ostream &out, const deque &deque);
+std::ostream& operator<<(std::ostream& out, const vector& vec);
+std::ostream& operator<<(std::ostream& out, const deque& deque);
 
 #endif
