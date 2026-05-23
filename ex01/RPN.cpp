@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 21:47:09 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/22 00:01:18 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/23 18:20:41 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ RPN::RPN(std::string equation)
                 throw std::runtime_error("Error: invalid RPN expression.");
 
             int num = equation[i] - '0';
-            _storage.push_back(num);
+            _storage.push_front(num);
         }
         // parse operator
         else if (equation[i] == '+' || equation[i] == '-' || equation[i] == '/' || equation[i] == '*')
@@ -45,10 +45,10 @@ RPN::RPN(std::string equation)
                 
             char operatorType = equation[i];
             
-            int numOne = _storage.back();
-            _storage.pop_back();
-            int numTwo = _storage.back();
-            _storage.pop_back();
+            int numOne = _storage.front();
+            _storage.pop_front();
+            int numTwo = _storage.front();
+            _storage.pop_front();
             
             int result;
             if (operatorType == '+')
@@ -65,7 +65,7 @@ RPN::RPN(std::string equation)
             else if (operatorType == '*')
                 result = numTwo * numOne;
             
-            _storage.push_back(result);
+            _storage.push_front(result);
         }
         // skip space
         else if (equation[i] == ' ')
@@ -79,7 +79,7 @@ RPN::RPN(std::string equation)
         throw std::runtime_error("Error: invalid RPN expression.");
     
     // print result
-    int equationResult = _storage.back();
+    int equationResult = _storage.front();
     std::cout << equationResult << std::endl;
 }
 
