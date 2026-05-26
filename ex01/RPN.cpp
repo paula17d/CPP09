@@ -6,7 +6,7 @@
 /*   By: pdrettas <pdrettas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 21:47:09 by pdrettas          #+#    #+#             */
-/*   Updated: 2026/05/23 18:20:41 by pdrettas         ###   ########.fr       */
+/*   Updated: 2026/05/26 18:46:03 by pdrettas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,7 @@ RPN::RPN(std::string equation)
         // parse number
         if (equation[i] >= '0' && equation[i] <= '9')
         {
-            // no multi-digit numbers (ex. 54)
-            if (i > 0 && equation[i - 1] >= '0' && equation[i - 1] <= '9')
-                throw std::runtime_error("Error: invalid RPN expression.");
-
-            // previous char shouldnt be a digit
+            // previous char shouldnt be a digit (no multi-digit nums)
             if (i > 0 && equation[i - 1] != ' ')
                 throw std::runtime_error("Error: invalid RPN expression.");
 
@@ -50,7 +46,7 @@ RPN::RPN(std::string equation)
             int numTwo = _storage.front();
             _storage.pop_front();
             
-            int result;
+            int result = 0;
             if (operatorType == '+')
                 result = numTwo + numOne;
             else if (operatorType == '-')
@@ -74,7 +70,7 @@ RPN::RPN(std::string equation)
             throw std::runtime_error("Error: invalid RPN expression.");
     }
 
-    // check how many numbers are left in the stack
+    // check how many numbers are left in the stack/list
     if (_storage.size() != 1)
         throw std::runtime_error("Error: invalid RPN expression.");
     
